@@ -1,0 +1,13 @@
+# c++ compiled
+*.o
+*.s
+a.out
+main
+*.a
+*.so
+
+# pdf
+*.pdf
+
+# macOS files
+.DS_Store
