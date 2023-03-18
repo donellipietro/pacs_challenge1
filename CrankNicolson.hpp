@@ -7,6 +7,7 @@
 #include <vector>
 #include <tuple>
 #include "basicZeroFun.hpp"
+#include "SchemeAnalysis.hpp"
 
 using function1 = std::function<double(double)>;
 using function2 = std::function<double(double, double)>;
@@ -17,7 +18,7 @@ finiteDiff(const function1 &f, const double x, const double h = 0.001)
   return (f(x + h) - f(x - h)) / (2 * h);
 }
 
-class CrankNicolson
+class CrankNicolson : public SchemeAnalysis
 {
 
 private:
@@ -34,12 +35,15 @@ public:
   CrankNicolson(const function2 &f,
                 const double y0,
                 const double T,
-                const unsigned int N) : f_(f),
-                                        y0_(y0),
-                                        T_(T),
-                                        N_(N),
-                                        h_(T / N)
-
+                const unsigned int N,
+                function1 u_ex = {},
+                const std::vector<unsigned int> &N_ref = {},
+                std::function<double(std::vector<double>)> norm = {})
+      : SchemeAnalysis(u_ex, N_ref, norm), f_(f),
+        y0_(y0),
+        T_(T),
+        N_(N),
+        h_(T / N)
   {
     t_.reserve(N + 1);
     u_.reserve(N + 1);
@@ -88,11 +92,9 @@ public:
     return true;
   }
 
-  std::array<std::vector<double>, 2> getResult() const
-  {
-    std::array<std::vector<double>, 2> result({t_, u_});
-    return result;
-  }
+  std::array<std::vector<double>, 2> getResult() const { return {t_, u_}; }
+  const std::vector<double> &gett() const { return t_; }
+  const std::vector<double> &getu() const { return u_; }
 
   void printSolution()
   {
