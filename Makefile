@@ -9,7 +9,7 @@ HEADERS = $(wildcard *.hpp)
 EXEC_sources = $(filter main%.cpp,$(SRCS))
 EXEC = $(EXEC_sources:.cpp=)
 
-CPPFLAGS += -I $(MY_PACS_ROOT)/include -I $(MY_PACS_ROOT)/src/LinearAlgebraUtil
+CPPFLAGS += -I $(MY_PACS_ROOT)/include
 LDFLAGS +=  -L $(MY_PACS_ROOT)/lib -Wl,-rpath=$(MY_PACS_ROOT)/lib
 LDLIBS += -l pacs -l stdc++ -l m
 

@@ -94,15 +94,6 @@ public:
     return result;
   }
 
-  void printTime()
-  {
-    std::cout << t_.size() << std::endl;
-    for (auto t : t_)
-    {
-      std::cout << t << std::endl;
-    }
-  }
-
   void printSolution()
   {
     std::cout << "t\tu" << std::endl;
@@ -110,6 +101,19 @@ public:
     {
       std::cout << t_[i] << "\t" << u_[i] << std::endl;
     }
+  }
+
+  void setN(unsigned int N)
+  {
+    N_ = N;
+    h_ = T_ / N_;
+
+    t_.clear();
+    u_.clear();
+    t_.reserve(N_ + 1);
+    u_.reserve(N_ + 1);
+
+    createGrid();
   }
 };
 
