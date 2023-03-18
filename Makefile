@@ -11,7 +11,7 @@ EXEC = $(EXEC_sources:.cpp=)
 
 CPPFLAGS += -I $(MY_PACS_ROOT)/include
 LDFLAGS +=  -L $(MY_PACS_ROOT)/lib -Wl,-rpath=$(MY_PACS_ROOT)/lib
-LDLIBS += -l pacs -l stdc++ -l m
+LDLIBS += -l pacs -l muparser -l stdc++ -l m
 
 .PHONY = all clean distclean
 .DEFAULT_GOAL = all

@@ -3,34 +3,30 @@
 #include <functional>
 #include <array>
 #include <vector>
+#include <fstream>
+#include <string>
 
 #include "CrankNicolson.hpp"
 #include "json.hpp"
+#include "MuparserFun.hpp"
 
 using json = nlohmann::json;
 
 using function1 = std::function<double(double)>;
 using function2 = std::function<double(double, double)>;
 
-double fun(double t, double y)
-{
-    return -t * std::exp(-y);
-}
-
-double sol(double t)
-{
-    return std::log(-t * t / 2 + 1);
-}
-
 int main(int argc, char **argv)
 {
 
-    // Inputs
-    const function2 f(fun);
-    const double y0 = 0;      // Initial condition
-    const double T = 1;       // Final time
-    const unsigned int N = 4; // Number of steps
+    // Solver parameters
+    std::ifstream fdata("data.json");
+    json data = json::parse(fdata);
+    const function2 f(MuparserFun2(data["problem"]["f"].get<std::string>()));
+    const double y0 = data["problem"].value("y0", 0.0);
+    const double T = data["domain"].value("T", 1.0);
+    const unsigned int N = data["numerical_scheme"].value("N", 4);
 
+    // Solver
     CrankNicolson solver(f, y0, T, N);
     if (solver.solve())
         solver.printSolution();
@@ -39,13 +35,13 @@ int main(int argc, char **argv)
 
     // solver.computeOrder();
 
-    // Convergence analysis
-
-    const function1 u_ex(sol);
-    const std::vector<unsigned int> N_ref({4, 8, 16, 32, 64, 128, 256});
+    // Scheme Analysis parameters
+    const function1 u_ex(MuparserFun1(data["scheme_analyis"]["sol"].get<std::string>()));
+    const std::vector<unsigned int> N_ref = data["scheme_analyis"]["N_ref"].get<std::vector<unsigned int>>();
     const std::function<double(std::vector<double>)> norm_max([](std::vector<double> error)
                                                               { return *std::max_element(error.begin(), error.end()); });
 
+    // Convergence order
     CrankNicolson solver_analysis(f, y0, T, N, u_ex, N_ref, norm_max);
     solver_analysis.computeOrder();
 
