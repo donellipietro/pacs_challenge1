@@ -29,5 +29,5 @@ distclean: clean
 	$(RM) $(EXEC)
 	$(RM) *~
 
-run: $(EXEC)
+run: $(EXEC) data.json
 	./$(EXEC)

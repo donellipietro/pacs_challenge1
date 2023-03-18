@@ -11,3 +11,6 @@ main
 
 # macOS files
 .DS_Store
+
+# data
+*.json

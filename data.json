@@ -7,7 +7,7 @@
 		"f": "-t * exp(-y)"
 	},
 	"numerical_scheme": {
-		"N": 10
+		"N": 20
 	},
 	"scheme_analyis": {
 		"sol": "log(-t * t / 2 + 1)",
