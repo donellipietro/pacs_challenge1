@@ -15,11 +15,7 @@
 using function1 = std::function<double(double)>;
 using function2 = std::function<double(double, double)>;
 
-double
-finiteDiff(const function1 &f, const double x, const double h = 0.001)
-{
-  return (f(x + h) - f(x - h)) / (2 * h);
-}
+double finiteDiff(const function1 &f, const double x, const double h = 0.0001);
 
 class CrankNicolson : public SchemeAnalysis
 {
@@ -57,7 +53,7 @@ public:
                 const unsigned int N,
                 const function1 &u_ex,
                 const std::vector<unsigned int> &N_ref,
-                const std::function<double(std::vector<double>)> &norm)
+                Norms norm)
       : SchemeAnalysis{u_ex, N_ref, norm},
         f_{f},
         y0_{y0},
@@ -163,5 +159,11 @@ public:
     createGrid();
   }
 };
+
+double
+finiteDiff(const function1 &f, const double x, const double h)
+{
+  return (f(x + h) - f(x - h)) / (2 * h);
+}
 
 #endif // __CRANK_NICOLSON__

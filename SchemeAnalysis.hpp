@@ -8,9 +8,19 @@
 #include <cmath>
 #include <functional>
 #include <iomanip>
+#include <algorithm>
 
 using function1 = std::function<double(double)>;
 using function2 = std::function<double(double, double)>;
+
+enum class Norms
+{
+    Linf,
+    L2
+};
+
+double norm_L2(const std::vector<double> &x);
+double norm_Linf(const std::vector<double> &x);
 
 class SchemeAnalysis
 {
@@ -21,13 +31,13 @@ protected:
     unsigned int n_;
     std::vector<double> errors_;
     std::vector<double> conv_rates_;
-    std::function<double(std::vector<double>)> norm_;
+    Norms norm_;
 
 public:
     SchemeAnalysis() = default;
     SchemeAnalysis(const function1 &u_ex,
                    const std::vector<unsigned int> &N_ref,
-                   const std::function<double(std::vector<double>)> &norm)
+                   Norms norm)
         : analysis_(true),
           u_ex_(u_ex),
           N_ref_(N_ref),
@@ -44,6 +54,21 @@ public:
     virtual const std::vector<double> &gett() const = 0;
     virtual const std::vector<double> &getu() const = 0;
 
+    double norm(std::vector<double> &x) const
+    {
+        switch (norm_)
+        {
+        case Norms::Linf:
+            return norm_Linf(x);
+
+        case Norms::L2:
+            return norm_L2(x);
+
+        default:
+            return norm_Linf(x);
+        }
+    }
+
     double computeError() const
     {
         std::vector<double> errors;
@@ -51,10 +76,10 @@ public:
 
         for (std::size_t i = 0; i < gett().size(); ++i)
         {
-            errors.push_back(u_ex_(gett()[i]) - getu()[i]);
+            errors.push_back(std::abs(u_ex_(gett()[i]) - getu()[i]));
         }
 
-        return norm_(errors);
+        return norm(errors);
     }
 
     void computeOrder()
@@ -115,5 +140,18 @@ public:
         fsolution.close();
     }
 };
+
+double norm_Linf(const std::vector<double> &x)
+{
+    return *std::max_element(x.begin(), x.end());
+}
+
+double norm_L2(const std::vector<double> &x)
+{
+    double result = 0.;
+    std::for_each(x.cbegin(), x.cend(), [&result](int xi)
+                  { result += xi * xi; });
+    return std::sqrt(result);
+}
 
 #endif // __SCHEME_ANALYSIS__

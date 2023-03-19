@@ -12,9 +12,6 @@
 
 using json = nlohmann::json;
 
-using function1 = std::function<double(double)>;
-using function2 = std::function<double(double, double)>;
-
 int main(int argc, char **argv)
 {
 
@@ -44,11 +41,9 @@ int main(int argc, char **argv)
     // Scheme Analysis parameters
     const function1 u_ex(MuparserFun1(data["scheme_analyis"]["sol"].get<std::string>()));
     const std::vector<unsigned int> N_ref = data["scheme_analyis"]["N_ref"].get<std::vector<unsigned int>>();
-    const std::function<double(std::vector<double>)> norm_max([](std::vector<double> error)
-                                                              { return *std::max_element(error.begin(), error.end()); });
 
     // Convergence order
-    CrankNicolson solver_analysis(f, y0, T, N, u_ex, N_ref, norm_max);
+    CrankNicolson solver_analysis(f, y0, T, N, u_ex, N_ref, Norms::Linf);
     solver_analysis.solve();
     solver_analysis.exportSolution("solution");
     solver_analysis.computeOrder();
