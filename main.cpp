@@ -50,8 +50,9 @@ int main(int argc, char **argv)
     // Convergence order
     CrankNicolson solver_analysis(f, y0, T, N, u_ex, N_ref, norm_max);
     solver_analysis.solve();
-    solver_analysis.exportSolution("solution_complete");
+    solver_analysis.exportSolution("solution");
     solver_analysis.computeOrder();
+    solver_analysis.exportConvergence("convergence");
 
     return 0;
 }

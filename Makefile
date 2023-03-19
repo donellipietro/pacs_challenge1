@@ -28,6 +28,8 @@ clean:
 distclean: clean
 	$(RM) $(EXEC)
 	$(RM) *~
+	$(RM) solutions/*
 
 run: $(EXEC) data.json
 	./$(EXEC)
+	sh plot.sh

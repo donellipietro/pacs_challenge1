@@ -100,6 +100,20 @@ public:
         std::cout << std::endl
                   << std::endl;
     }
+
+    void exportConvergence(const std::string &fname = "convergence")
+    {
+        std::ofstream fsolution("solutions/" + fname + ".dat", std::ofstream::out);
+        for (std::size_t i = 0; i < n_; ++i)
+        {
+            fsolution << static_cast<double>(N_ref_[0]) / N_ref_[i] << "\t"
+                      << errors_[i] / errors_[0] << "\t"
+                      << static_cast<double>(N_ref_[0]) / N_ref_[i] << "\t"
+                      << std::pow(static_cast<double>(N_ref_[0]) / N_ref_[i], 2)
+                      << std::endl;
+        }
+        fsolution.close();
+    }
 };
 
 #endif // __SCHEME_ANALYSIS__
