@@ -24,9 +24,9 @@ protected:
 
 public:
     SchemeAnalysis() = default;
-    SchemeAnalysis(function1 &u_ex,
+    SchemeAnalysis(const function1 &u_ex,
                    const std::vector<unsigned int> &N_ref,
-                   std::function<double(std::vector<double>)> &norm)
+                   const std::function<double(std::vector<double>)> &norm)
         : analysis_(true),
           u_ex_(u_ex),
           N_ref_(N_ref),
@@ -59,7 +59,6 @@ public:
     void computeOrder()
     {
 
-        std::cout << analysis_;
         if (!analysis_)
         {
             std::cout << "Analysys is not initialized for this solver" << std::endl;

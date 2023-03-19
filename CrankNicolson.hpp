@@ -35,21 +35,47 @@ public:
   CrankNicolson(const function2 &f,
                 const double y0,
                 const double T,
-                const unsigned int N,
-                function1 u_ex = {},
-                const std::vector<unsigned int> &N_ref = {},
-                std::function<double(std::vector<double>)> norm = {})
-      : SchemeAnalysis(u_ex, N_ref, norm), f_(f),
-        y0_(y0),
-        T_(T),
-        N_(N),
-        h_(T / N)
+                const unsigned int N)
+      : f_{f},
+        y0_{y0},
+        T_{T},
+        N_{N},
+        h_{T / N}
   {
     t_.reserve(N + 1);
     u_.reserve(N + 1);
 
     createGrid();
   }
+
+  CrankNicolson(const function2 &f,
+                const double y0,
+                const double T,
+                const unsigned int N,
+                const function1 &u_ex,
+                const std::vector<unsigned int> &N_ref,
+                const std::function<double(std::vector<double>)> &norm)
+      : SchemeAnalysis{u_ex, N_ref, norm},
+        f_{f},
+        y0_{y0},
+        T_{T},
+        N_{N},
+        h_{T / N}
+  {
+    t_.reserve(N + 1);
+    u_.reserve(N + 1);
+
+    createGrid();
+  }
+
+  // Copy constructors?
+  /*
+    CrankNicolson(const CtrankNicolson & CN)
+    CrankNicolson(const CtrankNicolson & CN,
+                  const function1 &u_ex,
+                  const std::vector<unsigned int> &N_ref,
+                  const std::function<double(std::vector<double>)> &norm)
+  */
 
   void createGrid()
   {

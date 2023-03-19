@@ -29,11 +29,11 @@ int main(int argc, char **argv)
     // Solver
     CrankNicolson solver(f, y0, T, N);
     if (solver.solve())
-        solver.printSolution();
+        std::cout << "Solved" << std::endl; // solver.printSolution();
     else
         std::cout << "Error" << std::endl;
 
-    // solver.computeOrder();
+    solver.computeOrder();
 
     // Scheme Analysis parameters
     const function1 u_ex(MuparserFun1(data["scheme_analyis"]["sol"].get<std::string>()));
