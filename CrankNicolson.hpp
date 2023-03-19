@@ -6,6 +6,9 @@
 #include <array>
 #include <vector>
 #include <tuple>
+#include <iomanip>
+#include <fstream>
+
 #include "basicZeroFun.hpp"
 #include "SchemeAnalysis.hpp"
 
@@ -124,11 +127,27 @@ public:
 
   void printSolution()
   {
-    std::cout << "t\tu" << std::endl;
+    std::cout << std::endl;
+    std::cout << std::left << std::setw(8) << "t"
+              << "\t"
+              << "u" << std::endl;
     for (std::size_t i = 0; i <= N_; ++i)
     {
-      std::cout << t_[i] << "\t" << u_[i] << std::endl;
+      std::cout << std::left << std::setw(8) << t_[i] << "\t" << u_[i] << std::endl;
     }
+  }
+
+  void exportSolution(const std::string &fname = "solution")
+  {
+    std::ofstream fsolution("solutions/" + fname + ".dat", std::ofstream::out);
+    for (std::size_t i = 0; i <= N_; ++i)
+    {
+      fsolution << t_[i] << "\t" << u_[i];
+      if (analysis_)
+        fsolution << "\t" << u_ex_(t_[i]);
+      fsolution << std::endl;
+    }
+    fsolution.close();
   }
 
   void setN(unsigned int N)

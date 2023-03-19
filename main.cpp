@@ -26,12 +26,18 @@ int main(int argc, char **argv)
     const double T = data["domain"].value("T", 1.0);
     const unsigned int N = data["numerical_scheme"].value("N", 4);
 
+    std::cout << std::endl;
+
     // Solver
     CrankNicolson solver(f, y0, T, N);
     if (solver.solve())
-        std::cout << "Solved" << std::endl; // solver.printSolution();
+    {
+        std::cout << "Solved!" << std::endl;
+        solver.printSolution();
+        solver.exportSolution();
+    }
     else
-        std::cout << "Error" << std::endl;
+        std::cout << "Error!" << std::endl;
 
     solver.computeOrder();
 
@@ -43,6 +49,8 @@ int main(int argc, char **argv)
 
     // Convergence order
     CrankNicolson solver_analysis(f, y0, T, N, u_ex, N_ref, norm_max);
+    solver_analysis.solve();
+    solver_analysis.exportSolution("solution_complete");
     solver_analysis.computeOrder();
 
     return 0;

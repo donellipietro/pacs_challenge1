@@ -7,6 +7,7 @@
 #include <array>
 #include <cmath>
 #include <functional>
+#include <iomanip>
 
 using function1 = std::function<double(double)>;
 using function2 = std::function<double(double, double)>;
@@ -59,26 +60,45 @@ public:
     void computeOrder()
     {
 
+        std::cout << std::endl;
+        std::cout << "########################" << std::endl;
+        std::cout << "# Convergence analysis #" << std::endl;
+        std::cout << "########################" << std::endl;
+        std::cout << std::endl;
+
         if (!analysis_)
         {
-            std::cout << "Analysys is not initialized for this solver" << std::endl;
+            std::cout << "Attention! Analysys is not initialized for this solver." << std::endl;
             return;
         }
 
         for (unsigned int N_conv : N_ref_)
         {
+            std::cout << "- Solving the problem for N = " << std::setw(4) << N_conv << " ... ";
             setN(N_conv);
-            solve();
-            errors_.push_back(computeError());
+            if (solve())
+            {
+                std::cout << "Solved! ";
+                errors_.push_back(computeError());
+                std::cout << "error = " << errors_.back() << std::endl;
+            }
+            else
+            {
+                std::cout << "  Error, convergence analysis stopped." << std::endl;
+                return;
+            }
         }
 
-        std::cout << "Convergence rates" << std::endl;
+        std::cout << std::endl;
+        std::cout << "Convergence rates: ";
+
         for (size_t i = 0; i < n_ - 1; ++i)
         {
             conv_rates_.push_back(std::log10(errors_[i + 1] / errors_[i]) / (std::log10(static_cast<double>(N_ref_[i]) / N_ref_[i + 1])));
             std::cout << conv_rates_.back() << " ";
         }
-        std::cout << std::endl;
+        std::cout << std::endl
+                  << std::endl;
     }
 };
 

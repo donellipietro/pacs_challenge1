@@ -12,7 +12,6 @@
 	"scheme_analyis": {
 		"sol": "log(-t * t / 2 + 1)",
 		"N_ref": [
-			2,
 			4,
 			8,
 			16,
