@@ -6,7 +6,7 @@
 #include <fstream>
 #include <string>
 
-#include "CrankNicolson.hpp"
+#include "ThetaMethod.hpp"
 #include "json.hpp"
 #include "MuparserFun.hpp"
 
@@ -22,11 +22,12 @@ int main(int argc, char **argv)
     const double y0 = data["problem"].value("y0", 0.0);
     const double T = data["domain"].value("T", 1.0);
     const unsigned int N = data["numerical_scheme"].value("N", 4);
+    const double theta = data["numerical_scheme"].value("theta", 0.5);
 
     std::cout << std::endl;
 
     // Solver
-    CrankNicolson solver(f, y0, T, N);
+    ThetaMethod solver(f, y0, T, N, theta);
     if (solver.solve())
     {
         std::cout << "Solved!" << std::endl;
@@ -43,7 +44,7 @@ int main(int argc, char **argv)
     const std::vector<unsigned int> N_ref = data["scheme_analyis"]["N_ref"].get<std::vector<unsigned int>>();
 
     // Convergence order
-    CrankNicolson solver_analysis(f, y0, T, N, u_ex, N_ref, Norms::Linf);
+    ThetaMethod solver_analysis(f, y0, T, N, theta, u_ex, N_ref, Norms::Linf);
     solver_analysis.solve();
     solver_analysis.exportSolution("solution");
     solver_analysis.computeOrder();

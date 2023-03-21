@@ -7,12 +7,12 @@
 		"f": "-t * exp(-y)"
 	},
 	"numerical_scheme": {
-		"N": 20
+		"N": 20,
+		"theta": 0.2
 	},
 	"scheme_analyis": {
 		"sol": "log(-t * t / 2 + 1)",
 		"N_ref": [
-			4,
 			8,
 			16,
 			32,

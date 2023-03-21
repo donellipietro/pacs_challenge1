@@ -16,4 +16,4 @@ main
 *.json
 
 # solutions
-solutions/*
+results/*

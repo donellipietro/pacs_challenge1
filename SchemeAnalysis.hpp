@@ -128,7 +128,7 @@ public:
 
     void exportConvergence(const std::string &fname = "convergence")
     {
-        std::ofstream fsolution("solutions/" + fname + ".dat", std::ofstream::out);
+        std::ofstream fsolution("results/" + fname + ".dat", std::ofstream::out);
         for (std::size_t i = 0; i < n_; ++i)
         {
             fsolution << static_cast<double>(N_ref_[0]) / N_ref_[i] << "\t"
