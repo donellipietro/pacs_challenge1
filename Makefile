@@ -9,9 +9,9 @@ HEADERS = $(wildcard *.hpp)
 EXEC_sources = $(filter main%.cpp,$(SRCS))
 EXEC = $(EXEC_sources:.cpp=)
 
-CPPFLAGS += -I $(MY_PACS_ROOT)/include
-LDFLAGS +=  -L $(MY_PACS_ROOT)/lib -Wl,-rpath=$(MY_PACS_ROOT)/lib
-LDLIBS += -l pacs -l muparser -l stdc++ -l m
+CPPFLAGS += -I ./include # $(MY_PACS_ROOT)
+LDFLAGS +=  -L ./lib -Wl,-rpath=./lib # $(MY_PACS_ROOT)
+LDLIBS += -l muparser -l stdc++ -l m
 
 .PHONY = all clean distclean
 .DEFAULT_GOAL = all
