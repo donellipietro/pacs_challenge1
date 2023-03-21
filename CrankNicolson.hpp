@@ -91,7 +91,7 @@ public:
     double un = y0_;
     double tn = t_.front();
     function1 F([this, &tn, &un](double x)
-                { return x - h_ / 2 * (f_(tn + h_, x) + f_(tn + h_, un)) - un; });
+                { return x - h_ / 2 * (f_(tn + h_, x) + f_(tn, un)) - un; });
 
     // Initialization of Newton
     bool status_newton = true;
