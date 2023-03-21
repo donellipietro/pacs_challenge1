@@ -46,7 +46,6 @@ public:
     };
 
 private:
-    double x_;
     double t_;
     mu::Parser m_parser;
 };
