@@ -22,7 +22,9 @@ all: $(EXEC)
 
 main.o: main.cpp
 
-main_test.o: main_test.cpp Parameters.hpp ThetaMethod.hpp SchemeAnalysis.hpp
+main_test.o: main_test.cpp Parameters.hpp Parameters.cpp \
+ SchemeAnalysis.hpp SchemeAnalysis.cpp \
+ ThetaMethod.hpp ThetaMethod.cpp
 
 main_test: main_test.o
 # $(EXEC): $(OBJS)
