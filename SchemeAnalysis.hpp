@@ -19,31 +19,39 @@ double norm_L2(const std::vector<double> &x);
 class SchemeAnalysis
 {
 protected:
-    bool analysis_ = false;
+    bool analysis_;
+    bool performing_analysis_ = false;
     function1 uex_;
     std::vector<unsigned int> N_ref_;
     unsigned int n_;
     std::vector<double> errors_;
     std::vector<double> conv_rates_;
     Norms norm_;
+    bool plots_;
 
 public:
     SchemeAnalysis() = default;
 
-    void init();
+    void computeOrder();
 
-    virtual std::array<std::vector<double>, 2> getResult() const = 0;
+    // Pure virtual method that the numeric scheme must expose
+    // to interact with SchemeAnalysis
     virtual bool solve() = 0;
+
+protected:
+    void init();
+    void exportConvergence() const;
+
+    // Pure virtual methods that the numeric scheme must expose
+    // to interact with SchemeAnalysis
     virtual void setN(const unsigned int N) = 0;
     virtual void restoreN() = 0;
     virtual const std::vector<double> &gett() const = 0;
     virtual const std::vector<double> &getu() const = 0;
 
+private:
     double norm(std::vector<double> &x) const;
     double computeError() const;
-    void computeOrder();
-
-    void exportConvergence(const std::string &fname) const;
 };
 
 #include "SchemeAnalysis.cpp"

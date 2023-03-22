@@ -36,19 +36,20 @@ public:
   ThetaMethod(const std::string &filename) : params_(filename) { init(); }
 
   std::array<std::vector<double>, 2> getResult() const { return {t_, uh_}; }
-  const std::vector<double> &gett() const { return t_; }
-  const std::vector<double> &getu() const { return uh_; }
-
-  void initScheme();
-  void init();
 
   bool solve();
-
   void printSolution() const;
-  void exportSolution(const std::string &fname) const;
 
-  void setN(unsigned int N);
-  void restoreN();
+  Parameters parameters() const { return params_; };
+
+protected:
+  void initScheme();
+  void init();
+  const std::vector<double> &gett() const override { return t_; }
+  const std::vector<double> &getu() const override { return uh_; }
+  void setN(unsigned int N) override;
+  void restoreN() override;
+  void exportSolution() const;
 };
 
 #include "ThetaMethod.cpp"

@@ -7,6 +7,8 @@ int main(int argc, char **argv)
     /* Test: Parameters */
     /********************/
 
+    /*
+
     // Default initialization
     Parameters params1;
     std::cout << params1;
@@ -31,24 +33,44 @@ int main(int argc, char **argv)
     Parameters params6("data/no_analysis.json");
     std::cout << params6;
 
+    */
+
     /**********************/
     /* Test: Constructors */
     /**********************/
 
-    // Default initialization
-    ThetaMethod solver1;
+    /*
+
+    // Initialization solver no analysis
+    ThetaMethod solver1("data/no_analysis.json");
+    std::cout << solver1.parameters();
+    solver1.solve();
+    solver1.computeOrder();
+    solver1.getResult();
 
     // Error in params
-    ThetaMethod solver2("data/dat.json");
+    ThetaMethod solver2("data/bad_initialization2.json"); // data/dat.json data/bad_initialization1.json
+    std::cout << solver2.parameters();
+    solver2.solve();
+    solver2.computeOrder();
 
-    // Initialization from parameter file
-    ThetaMethod solver3("data/data.json");
+    */
+
+    // Default initialization
+    ThetaMethod solver3;
+    std::cout << solver3.parameters();
+    solver3.solve();
+    solver3.computeOrder();
+    solver3.getResult();
 
     /***************/
     /* Test: Norms */
     /***************/
 
-    std::cout << std::endl;
+    /*
+
+    std::cout
+        << std::endl;
     std::vector<double> v{0, 1, -1, 2, -3};
     std::cout << "v = { ";
     for (auto vi : v)
@@ -57,6 +79,8 @@ int main(int argc, char **argv)
     std::cout << "- ||v||Linf = " << norm_Linf(v) << std::endl;
     std::cout << "- ||v||L1 = " << norm_L1(v) << std::endl;
     std::cout << "- ||v||L2 = " << norm_L2(v) << std::endl;
+
+    */
 
     return 0;
 }

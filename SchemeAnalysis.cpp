@@ -5,7 +5,8 @@ void SchemeAnalysis::init()
 {
     n_ = N_ref_.size();
     errors_.reserve(n_);
-    conv_rates_.reserve(n_ - 1);
+    if (n_ > 1)
+        conv_rates_.reserve(n_ - 1);
 }
 
 // Calculates the norm of the vector received as input
@@ -54,9 +55,12 @@ void SchemeAnalysis::computeOrder()
 
     if (!analysis_)
     {
-        std::cout << "Attention! Analysys is not initialized for this solver." << std::endl;
+        std::cout << "Attention! Analysys is not initialized for this solver." << std::endl
+                  << std::endl;
         return;
     }
+
+    performing_analysis_ = true;
 
     // Problema solution for different N
     for (unsigned int N_conv : N_ref_)
@@ -72,6 +76,8 @@ void SchemeAnalysis::computeOrder()
         else
         {
             std::cout << "Error, convergence analysis stopped." << std::endl;
+            performing_analysis_ = false;
+            restoreN();
             return;
         }
     }
@@ -87,15 +93,19 @@ void SchemeAnalysis::computeOrder()
     std::cout << std::endl
               << std::endl;
 
+    if (plots_)
+        exportConvergence();
+
     // Restored the initial N
+    performing_analysis_ = false;
     restoreN();
 }
 
 // Exports the information needed for the convergence plot
 // (errors are normalized)
-void SchemeAnalysis::exportConvergence(const std::string &filename = "convergence") const
+void SchemeAnalysis::exportConvergence() const
 {
-    std::ofstream fsolution("results/" + filename + ".dat", std::ofstream::out);
+    std::ofstream fsolution("results/convergence.dat", std::ofstream::out);
     for (std::size_t i = 0; i < n_; ++i)
     {
         fsolution << static_cast<double>(N_ref_[0]) / N_ref_[i] << "\t"

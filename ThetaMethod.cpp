@@ -4,6 +4,8 @@
 void ThetaMethod::initScheme()
 {
     // Initialization of grid and solution vectors
+    t_.clear();
+    uh_.clear();
     t_.reserve(N_ + 1);
     uh_.reserve(N_ + 1);
 
@@ -35,21 +37,51 @@ void ThetaMethod::init()
     // Scheme
     N_ = params_.scheme.N;
     theta_ = params_.scheme.theta;
+    initScheme();
 
     // Analysis
     analysis_ = params_.analysis.analysis;
     uex_ = MuparserFun1(params_.analysis.exact_solution);
     N_ref_ = params_.analysis.N_ref;
     norm_ = params_.analysis.norm;
+    plots_ = params_.analysis.plots;
     SchemeAnalysis::init();
 
-    std::cout << "Initialization completed!" << std::endl;
+    std::cout << "Initialization completed!" << std::endl
+              << std::endl;
 }
 
 // Solves the problem using the choosen theta-method
 // returns true if the newton solver reaches convergence, false otherwise
 bool ThetaMethod::solve()
 {
+
+    if (!performing_analysis_)
+    {
+        std::cout << std::endl;
+        std::cout << "#######################" << std::endl;
+        std::cout << "# Theta-Method solver #" << std::endl;
+        std::cout << "#######################" << std::endl;
+        std::cout << std::endl;
+    }
+
+    if (!params_.sanityCheck())
+        return false;
+
+    if (!performing_analysis_)
+    {
+        std::cout << "Problem: " << std::endl
+                  << "y'(t) = " << params_.problem.f << " t in (0, " << T_ << ")" << std::endl
+                  << "y(0) = " << y0_ << std::endl
+                  << std::endl;
+
+        std::cout << "Solver: " << std::endl
+                  << "- theta-method with theta = " << theta_ << std::endl
+                  << "- N = " << N_ << std::endl
+                  << "- h = " << h_ << std::endl
+                  << std::endl;
+    }
+
     // Initilaization
     double un = y0_;
     double tn = t_.front();
@@ -75,13 +107,22 @@ bool ThetaMethod::solve()
         }
     }
 
+    if (!performing_analysis_)
+    {
+        std::cout << "Numerical solution: " << std::endl;
+        printSolution();
+        std::cout << std::endl;
+    }
+
+    if (plots_)
+        exportSolution();
+
     return true;
 }
 
 // Prints the formatted solution in console
 void ThetaMethod::printSolution() const
 {
-    std::cout << std::endl;
     std::cout << std::left << std::setw(8) << "t"
               << "\t"
               << "u" << std::endl;
@@ -92,9 +133,9 @@ void ThetaMethod::printSolution() const
 }
 
 // Exports the information needed for the solution plot
-void ThetaMethod::exportSolution(const std::string &filename = "solution") const
+void ThetaMethod::exportSolution() const
 {
-    std::ofstream fsolution("results/" + filename + ".dat", std::ofstream::out);
+    std::ofstream fsolution("results/solution.dat", std::ofstream::out);
     for (std::size_t i = 0; i <= N_; ++i)
     {
         fsolution << t_[i] << "\t" << uh_[i];

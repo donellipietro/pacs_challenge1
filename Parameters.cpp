@@ -64,7 +64,8 @@ Parameters::Parameters(const std::string &fname)
 bool Parameters::sanityCheck() const
 {
     for (auto error : errors)
-        std::cout << error << std::endl;
+        std::cout << error << std::endl
+                  << std::endl;
     return errors.size() == 0;
 }
 
@@ -79,9 +80,7 @@ std::ostream &operator<<(std::ostream &os, const Parameters &params)
     os << std::endl;
 
     if (!params.sanityCheck())
-    {
         return os;
-    }
 
     os << "Domain:" << std::endl
        << "- T: " << params.domain.T << std::endl
