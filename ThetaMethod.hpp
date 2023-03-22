@@ -11,9 +11,8 @@
 
 #include "basicZeroFun.hpp"
 #include "SchemeAnalysis.hpp"
-
-using function1 = std::function<double(double)>;
-using function2 = std::function<double(double, double)>;
+#include "Parameters.hpp"
+#include "MuparserFun.hpp"
 
 double finiteDiff(const function1 &f, const double x, const double h = 0.001);
 
@@ -21,6 +20,7 @@ class ThetaMethod : public SchemeAnalysis
 {
 
 protected:
+  Parameters params_;
   function2 f_;
   double y0_;
   double T_;
@@ -29,71 +29,11 @@ protected:
   double theta_;
 
   std::vector<double> t_;
-  std::vector<double> u_;
+  std::vector<double> uh_;
 
 public:
-  ThetaMethod(const function2 &f,
-              const double y0,
-              const double T,
-              const unsigned int N,
-              const double theta)
-      : f_{f},
-        y0_{y0},
-        T_{T},
-        N_{N},
-        h_{T / N},
-        theta_{theta}
-  {
-    t_.reserve(N + 1);
-    u_.reserve(N + 1);
-
-    createGrid();
-  }
-
-  ThetaMethod(const function2 &f,
-              const double y0,
-              const double T,
-              const unsigned int N)
-      : ThetaMethod{f, y0, T, N, 0.5} {}
-
-  ThetaMethod(const function2 &f,
-              const double y0,
-              const double T,
-              const unsigned int N,
-              const double theta,
-              const function1 &u_ex,
-              const std::vector<unsigned int> &N_ref,
-              Norms norm)
-      : SchemeAnalysis{u_ex, N_ref, norm},
-        f_{f},
-        y0_{y0},
-        T_{T},
-        N_{N},
-        h_{T / N},
-        theta_{theta}
-  {
-    t_.reserve(N + 1);
-    u_.reserve(N + 1);
-
-    createGrid();
-  }
-
-  ThetaMethod(const function2 &f,
-              const double y0,
-              const double T,
-              const unsigned int N,
-              const function1 &u_ex,
-              const std::vector<unsigned int> &N_ref,
-              Norms norm) : ThetaMethod{f, y0, T, N, 0.5, u_ex, N_ref, norm} {}
-
-  // Copy constructors?
-  /*
-    CrankNicolson(const CtrankNicolson & CN)
-    CrankNicolson(const CtrankNicolson & CN,
-                  const function1 &u_ex,
-                  const std::vector<unsigned int> &N_ref,
-                  const std::function<double(std::vector<double>)> &norm)
-  */
+  ThetaMethod() { init(); }
+  ThetaMethod(const std::string &filename) : params_(filename) { init(); }
 
   void createGrid()
   {
@@ -101,6 +41,42 @@ public:
     {
       t_.push_back(0 + i * h_);
     }
+  }
+
+  void init()
+  {
+    std::cout << std::endl;
+    std::cout << "########################" << std::endl;
+    std::cout << "# Model initialization #" << std::endl;
+    std::cout << "########################" << std::endl;
+    std::cout << std::endl;
+
+    if (!params_.sanityCheck())
+      return;
+
+    // Domain
+    T_ = params_.domain.T;
+
+    // Problem
+    f_ = MuparserFun2(params_.problem.f);
+    y0_ = params_.problem.y0;
+
+    // Scheme
+    N_ = params_.scheme.N;
+    t_.reserve(N_ + 1);
+    createGrid();
+    uh_.reserve(N_ + 1);
+    h_ = T_ / N_;
+    theta_ = params_.scheme.theta;
+
+    // Analysis
+    analysis_ = params_.analysis.analysis;
+    uex_ = MuparserFun1(params_.analysis.exact_solution);
+    N_ref_ = params_.analysis.N_ref;
+    norm_ = params_.analysis.norm;
+    SchemeAnalysis::init();
+
+    std::cout << "Initialization completed!" << std::endl;
   }
 
   bool solve()
@@ -128,7 +104,7 @@ public:
       }
       else
       {
-        u_.push_back(un);
+        uh_.push_back(un);
         tn = t_[i];
       }
     }
@@ -136,9 +112,9 @@ public:
     return true;
   }
 
-  std::array<std::vector<double>, 2> getResult() const { return {t_, u_}; }
+  std::array<std::vector<double>, 2> getResult() const { return {t_, uh_}; }
   const std::vector<double> &gett() const { return t_; }
-  const std::vector<double> &getu() const { return u_; }
+  const std::vector<double> &getu() const { return uh_; }
 
   void printSolution()
   {
@@ -148,7 +124,7 @@ public:
               << "u" << std::endl;
     for (std::size_t i = 0; i <= N_; ++i)
     {
-      std::cout << std::left << std::setw(8) << t_[i] << "\t" << u_[i] << std::endl;
+      std::cout << std::left << std::setw(8) << t_[i] << "\t" << uh_[i] << std::endl;
     }
   }
 
@@ -157,9 +133,9 @@ public:
     std::ofstream fsolution("results/" + fname + ".dat", std::ofstream::out);
     for (std::size_t i = 0; i <= N_; ++i)
     {
-      fsolution << t_[i] << "\t" << u_[i];
+      fsolution << t_[i] << "\t" << uh_[i];
       if (analysis_)
-        fsolution << "\t" << u_ex_(t_[i]);
+        fsolution << "\t" << uex_(t_[i]);
       fsolution << std::endl;
     }
     fsolution.close();
@@ -171,13 +147,20 @@ public:
     h_ = T_ / N_;
 
     t_.clear();
-    u_.clear();
+    uh_.clear();
     t_.reserve(N_ + 1);
-    u_.reserve(N_ + 1);
+    uh_.reserve(N_ + 1);
 
     createGrid();
   }
+
+  void restoreN()
+  {
+    N_ = params_.scheme.N;
+  }
 };
+
+/*
 
 class CrankNicolson : public ThetaMethod
 {
@@ -194,10 +177,10 @@ public:
                 const double T,
                 const unsigned int N,
                 const double theta,
-                const function1 &u_ex,
+                const function1 &uh_ex,
                 const std::vector<unsigned int> &N_ref,
                 Norms norm)
-      : ThetaMethod{f, y0, T, N, 1 / 2, u_ex, N_ref, norm} {}
+      : ThetaMethod{f, y0, T, N, 1 / 2, uh_ex, N_ref, norm} {}
 };
 
 class BackwardEuler : public ThetaMethod
@@ -215,10 +198,10 @@ public:
                 const double T,
                 const unsigned int N,
                 const double theta,
-                const function1 &u_ex,
+                const function1 &uh_ex,
                 const std::vector<unsigned int> &N_ref,
                 Norms norm)
-      : ThetaMethod{f, y0, T, N, 1 / 2, u_ex, N_ref, norm} {}
+      : ThetaMethod{f, y0, T, N, 1 / 2, uh_ex, N_ref, norm} {}
 };
 
 class ForwardEuler : public ThetaMethod
@@ -236,11 +219,13 @@ public:
                const double T,
                const unsigned int N,
                const double theta,
-               const function1 &u_ex,
+               const function1 &uh_ex,
                const std::vector<unsigned int> &N_ref,
                Norms norm)
-      : ThetaMethod{f, y0, T, N, 1 / 2, u_ex, N_ref, norm} {}
+      : ThetaMethod{f, y0, T, N, 1 / 2, uh_ex, N_ref, norm} {}
 };
+
+*/
 
 double
 finiteDiff(const function1 &f, const double x, const double h)

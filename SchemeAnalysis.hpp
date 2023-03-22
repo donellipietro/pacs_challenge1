@@ -10,23 +10,17 @@
 #include <iomanip>
 #include <algorithm>
 
-using function1 = std::function<double(double)>;
-using function2 = std::function<double(double, double)>;
+#include "Parameters.hpp"
 
-enum class Norms
-{
-    Linf,
-    L2
-};
-
-double norm_L2(const std::vector<double> &x);
 double norm_Linf(const std::vector<double> &x);
+double norm_L1(const std::vector<double> &x);
+double norm_L2(const std::vector<double> &x);
 
 class SchemeAnalysis
 {
 protected:
     bool analysis_ = false;
-    function1 u_ex_;
+    function1 uex_;
     std::vector<unsigned int> N_ref_;
     unsigned int n_;
     std::vector<double> errors_;
@@ -35,15 +29,10 @@ protected:
 
 public:
     SchemeAnalysis() = default;
-    SchemeAnalysis(const function1 &u_ex,
-                   const std::vector<unsigned int> &N_ref,
-                   Norms norm)
-        : analysis_(true),
-          u_ex_(u_ex),
-          N_ref_(N_ref),
-          n_(N_ref.size()),
-          norm_(norm)
+
+    void init()
     {
+        n_ = N_ref_.size();
         errors_.reserve(n_);
         conv_rates_.reserve(n_ - 1);
     }
@@ -51,6 +40,7 @@ public:
     virtual std::array<std::vector<double>, 2> getResult() const = 0;
     virtual bool solve() = 0;
     virtual void setN(const unsigned int N) = 0;
+    virtual void restoreN() = 0;
     virtual const std::vector<double> &gett() const = 0;
     virtual const std::vector<double> &getu() const = 0;
 
@@ -60,6 +50,9 @@ public:
         {
         case Norms::Linf:
             return norm_Linf(x);
+
+        case Norms::L1:
+            return norm_L1(x);
 
         case Norms::L2:
             return norm_L2(x);
@@ -76,7 +69,7 @@ public:
 
         for (std::size_t i = 0; i < gett().size(); ++i)
         {
-            errors.push_back(std::abs(u_ex_(gett()[i]) - getu()[i]));
+            errors.push_back(uex_(gett()[i]) - getu()[i]);
         }
 
         return norm(errors);
@@ -124,6 +117,8 @@ public:
         }
         std::cout << std::endl
                   << std::endl;
+
+        restoreN();
     }
 
     void exportConvergence(const std::string &fname = "convergence")
@@ -143,13 +138,25 @@ public:
 
 double norm_Linf(const std::vector<double> &x)
 {
-    return *std::max_element(x.begin(), x.end());
+    return std::abs(*std::max_element(x.begin(), x.end(),
+                                      [](const int &a, const int &b)
+                                      { return abs(a) < abs(b); }));
+}
+
+double norm_L1(const std::vector<double> &x)
+{
+    double result = 0.;
+    std::for_each(x.cbegin(), x.cend(),
+                  [&result](int xi)
+                  { result += std::abs(xi); });
+    return result;
 }
 
 double norm_L2(const std::vector<double> &x)
 {
     double result = 0.;
-    std::for_each(x.cbegin(), x.cend(), [&result](int xi)
+    std::for_each(x.cbegin(), x.cend(),
+                  [&result](int xi)
                   { result += xi * xi; });
     return std::sqrt(result);
 }

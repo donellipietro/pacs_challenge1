@@ -18,9 +18,15 @@ LDLIBS += -l muparser -l stdc++ -l m
 
 all: $(EXEC)
 
-$(OBJS): $(SRCS) $(HEADERS)
+# $(OBJS): $(SRCS) $(HEADERS)
 
-$(EXEC): $(OBJS)
+main.o: main.cpp
+
+main_test.o: main_test.cpp Parameters.hpp ThetaMethod.hpp SchemeAnalysis.hpp
+
+main_test: main_test.o
+# $(EXEC): $(OBJS)
+
 
 clean:
 	$(RM) $(OBJS)
@@ -30,6 +36,9 @@ distclean: clean
 	$(RM) *~
 	$(RM) results/*
 
-run: $(EXEC) data.json
-	./$(EXEC)
+run: $(EXEC) data/data.json
+	./main
 	sh plot.sh
+
+test: main_test data/
+	./main_test

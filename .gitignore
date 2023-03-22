@@ -15,5 +15,6 @@ main
 # data
 *.json
 
-# solutions
+# results
 results/*
+

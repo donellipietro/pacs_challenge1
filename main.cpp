@@ -1,33 +1,39 @@
 #include <iostream>
-#include <cmath>
-#include <functional>
+
 #include <array>
 #include <vector>
-#include <fstream>
 #include <string>
 
+#include "GetPot"
 #include "ThetaMethod.hpp"
-#include "json.hpp"
-#include "MuparserFun.hpp"
 
-using json = nlohmann::json;
+void printHelp()
+{
+    std::cout
+        << "USAGE: main [-h] -p parameterFile (default: data.json)"
+        << std::endl;
+    std::cout << "-h --help this help" << std::endl;
+}
 
 int main(int argc, char **argv)
 {
 
-    // Solver parameters
-    std::ifstream fdata("data.json");
-    json data = json::parse(fdata);
-    const function2 f(MuparserFun2(data["problem"]["f"].get<std::string>()));
-    const double y0 = data["problem"].value("y0", 0.0);
-    const double T = data["domain"].value("T", 1.0);
-    const unsigned int N = data["numerical_scheme"].value("N", 4);
-    const double theta = data["numerical_scheme"].value("theta", 0.5);
+    // Help
+    GetPot cl(argc, argv);
+    if (cl.search(2, "-h", "--help"))
+    {
+        printHelp();
+        return 0;
+    }
 
-    std::cout << std::endl;
+    // Get file with parameter values
+    std::string filename = "data/" + static_cast<std::string>(cl.follow("data.json", "-p"));
 
     // Solver
-    ThetaMethod solver(f, y0, T, N, theta);
+    // solver(filename);
+    // ThetaMethod solver(filename);
+
+    /*
     if (solver.solve())
     {
         std::cout << "Solved!" << std::endl;
@@ -39,9 +45,6 @@ int main(int argc, char **argv)
 
     solver.computeOrder();
 
-    // Scheme Analysis parameters
-    const function1 u_ex(MuparserFun1(data["scheme_analyis"]["sol"].get<std::string>()));
-    const std::vector<unsigned int> N_ref = data["scheme_analyis"]["N_ref"].get<std::vector<unsigned int>>();
 
     // Convergence order
     ThetaMethod solver_analysis(f, y0, T, N, theta, u_ex, N_ref, Norms::Linf);
@@ -49,6 +52,7 @@ int main(int argc, char **argv)
     solver_analysis.exportSolution("solution");
     solver_analysis.computeOrder();
     solver_analysis.exportConvergence("convergence");
+    */
 
     return 0;
 }
