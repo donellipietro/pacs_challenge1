@@ -54,8 +54,6 @@ int main(int argc, char **argv)
     solver2.solve();
     solver2.computeOrder();
 
-    */
-
     // Default initialization
     ThetaMethod solver3;
     std::cout << solver3.parameters();
@@ -63,15 +61,15 @@ int main(int argc, char **argv)
     solver3.computeOrder();
     solver3.getResult();
 
+    */
+
     /***************/
     /* Test: Norms */
     /***************/
 
-    /*
-
-    std::cout
-        << std::endl;
-    std::vector<double> v{0, 1, -1, 2, -3};
+    std::cout << std::endl;
+    // std::vector<double> v{0, -0.2, -0.3, -0.4};
+    std::vector<double> v{0, -0.00784318, -0.0161237, -0.0255397, -0.0370155, -0.0519525, -0.0727206, -0.103775, -0.154593};
     std::cout << "v = { ";
     for (auto vi : v)
         std::cout << vi << " ";
@@ -79,8 +77,6 @@ int main(int argc, char **argv)
     std::cout << "- ||v||Linf = " << norm_Linf(v) << std::endl;
     std::cout << "- ||v||L1 = " << norm_L1(v) << std::endl;
     std::cout << "- ||v||L2 = " << norm_L2(v) << std::endl;
-
-    */
 
     return 0;
 }

@@ -30,29 +30,9 @@ int main(int argc, char **argv)
     std::string filename = "data/" + static_cast<std::string>(cl.follow("data.json", "-p"));
 
     // Solver
-    // solver(filename);
-    // ThetaMethod solver(filename);
-
-    /*
-    if (solver.solve())
-    {
-        std::cout << "Solved!" << std::endl;
-        solver.printSolution();
-        solver.exportSolution();
-    }
-    else
-        std::cout << "Error!" << std::endl;
-
+    ThetaMethod solver(filename);
+    solver.solve();
     solver.computeOrder();
-
-
-    // Convergence order
-    ThetaMethod solver_analysis(f, y0, T, N, theta, u_ex, N_ref, Norms::Linf);
-    solver_analysis.solve();
-    solver_analysis.exportSolution("solution");
-    solver_analysis.computeOrder();
-    solver_analysis.exportConvergence("convergence");
-    */
 
     return 0;
 }

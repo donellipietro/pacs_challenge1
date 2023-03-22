@@ -112,10 +112,9 @@ bool ThetaMethod::solve()
         std::cout << "Numerical solution: " << std::endl;
         printSolution();
         std::cout << std::endl;
+        if (plots_)
+            exportSolution();
     }
-
-    if (plots_)
-        exportSolution();
 
     return true;
 }

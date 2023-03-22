@@ -41,6 +41,15 @@ double SchemeAnalysis::computeError() const
         errors.push_back(uex_(gett()[i]) - getu()[i]);
     }
 
+    /*
+    std::cout << std::endl;
+    std::cout << "errors = { ";
+    for (auto vi : errors)
+        std::cout << vi << ", ";
+    std::cout << "}" << std::endl;
+    std::cout << std::endl;
+    */
+
     return norm(errors);
 }
 
@@ -120,9 +129,16 @@ void SchemeAnalysis::exportConvergence() const
 // Computes the Linf norm of a given vector
 double norm_Linf(const std::vector<double> &x)
 {
+    double result = 0.;
+
+    for (const auto xi : x)
+        result = std::max(result, std::abs(xi));
+    return result;
+    /*
     return std::abs(*std::max_element(x.begin(), x.end(),
-                                      [](const int &a, const int &b)
+                                      [](double a, double b)
                                       { return abs(a) < abs(b); }));
+                                      */
 }
 
 // Computes the L1 norm of a given vector
@@ -130,7 +146,7 @@ double norm_L1(const std::vector<double> &x)
 {
     double result = 0.;
     std::for_each(x.cbegin(), x.cend(),
-                  [&result](int xi)
+                  [&result](const double xi)
                   { result += std::abs(xi); });
     return result;
 }
@@ -140,7 +156,7 @@ double norm_L2(const std::vector<double> &x)
 {
     double result = 0.;
     std::for_each(x.cbegin(), x.cend(),
-                  [&result](int xi)
+                  [&result](const double xi)
                   { result += xi * xi; });
     return std::sqrt(result);
 }

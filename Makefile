@@ -20,15 +20,19 @@ all: $(EXEC)
 
 # $(OBJS): $(SRCS) $(HEADERS)
 
-main.o: main.cpp
+main.o: main.cpp Parameters.hpp Parameters.cpp \
+ SchemeAnalysis.hpp SchemeAnalysis.cpp \
+ ThetaMethod.hpp ThetaMethod.cpp
 
 main_test.o: main_test.cpp Parameters.hpp Parameters.cpp \
  SchemeAnalysis.hpp SchemeAnalysis.cpp \
  ThetaMethod.hpp ThetaMethod.cpp
 
-main_test: main_test.o
 # $(EXEC): $(OBJS)
 
+main_test: main_test.o
+
+main: main.o
 
 clean:
 	$(RM) $(OBJS)
@@ -38,9 +42,11 @@ distclean: clean
 	$(RM) *~
 	$(RM) results/*
 
-run: $(EXEC) data/data.json
-	./main
-	sh plot.sh
+run: main data/
+	$(RM) results/*
+	./main -p $(p)
+	@ if [ -e results/solution.dat ]; then sh plot_solution.sh; fi
+	@ if [ -e results/convergence.dat ]; then sh plot_convergence.sh; fi
 
 test: main_test data/
 	./main_test
