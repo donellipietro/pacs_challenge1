@@ -13,7 +13,7 @@ CPPFLAGS += -I ./include # $(MY_PACS_ROOT)
 LDFLAGS +=  -L ./lib -Wl,-rpath=./lib # $(MY_PACS_ROOT)
 LDLIBS += -l muparser -l stdc++ -l m
 
-.PHONY = all clean distclean
+.PHONY = all clean distclean run test
 .DEFAULT_GOAL = all
 
 all: $(EXEC)
@@ -22,25 +22,19 @@ all: $(EXEC)
 
 main.o: main.cpp Parameters.hpp Parameters.cpp \
  SchemeAnalysis.hpp SchemeAnalysis.cpp \
- ThetaMethod.hpp ThetaMethod.cpp
+ ThetaMethod.hpp ThetaMethod.cpp \
+ MuParserFun.hpp
 
 main_test.o: main_test.cpp Parameters.hpp Parameters.cpp \
  SchemeAnalysis.hpp SchemeAnalysis.cpp \
- ThetaMethod.hpp ThetaMethod.cpp
+ ThetaMethod.hpp ThetaMethod.cpp \
+ MuParserFun.hpp
 
 # $(EXEC): $(OBJS)
 
 main_test: main_test.o
 
 main: main.o
-
-clean:
-	$(RM) $(OBJS)
-
-distclean: clean
-	$(RM) $(EXEC)
-	$(RM) *~
-	$(RM) results/*
 
 run: main data/
 	$(RM) results/*
@@ -50,3 +44,11 @@ run: main data/
 
 test: main_test data/
 	./main_test
+
+clean:
+	$(RM) $(OBJS)
+
+distclean: clean
+	$(RM) $(EXEC)
+	$(RM) *~
+	$(RM) results/*

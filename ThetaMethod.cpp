@@ -31,7 +31,7 @@ void ThetaMethod::init()
     T_ = params_.domain.T;
 
     // Problem
-    f_ = MuparserFun2(params_.problem.f);
+    f_ = MuparserFun(params_.problem.f);
     y0_ = params_.problem.y0;
 
     // Scheme
@@ -41,7 +41,7 @@ void ThetaMethod::init()
 
     // Analysis
     analysis_ = params_.analysis.analysis;
-    uex_ = MuparserFun1(params_.analysis.exact_solution);
+    uex_ = MuparserFun(params_.analysis.exact_solution);
     N_ref_ = params_.analysis.N_ref;
     norm_ = params_.analysis.norm;
     plots_ = params_.analysis.plots;

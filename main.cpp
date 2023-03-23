@@ -32,6 +32,7 @@ int main(int argc, char **argv)
     // Solver
     ThetaMethod solver(filename);
     solver.solve();
+    auto solution = solver.getResult();
     solver.computeOrder();
 
     return 0;
