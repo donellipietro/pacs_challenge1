@@ -95,7 +95,11 @@ bool ThetaMethod::solve()
     // Iterative algorithm
     for (std::size_t i = 1; i <= N_; ++i)
     {
-        std::tie(un, status_newton) = apsc::Newton(F, dF, un);
+        if (theta_ == 0.)
+            un = h_ * f_(tn, un) + un;
+        else
+            std::tie(un, status_newton) = apsc::Newton(F, dF, un);
+
         if (!status_newton)
         {
             std::cerr << "Newton algorithm cannot find the solution" << std::endl;
