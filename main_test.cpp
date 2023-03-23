@@ -7,8 +7,6 @@ int main(int argc, char **argv)
     /* Test: Parameters */
     /********************/
 
-    /*
-
     // Default initialization
     Parameters params1;
     std::cout << params1;
@@ -33,13 +31,9 @@ int main(int argc, char **argv)
     Parameters params6("data/no_analysis.json");
     std::cout << params6;
 
-    */
-
     /**********************/
     /* Test: Constructors */
     /**********************/
-
-    /*
 
     // Initialization solver no analysis
     ThetaMethod solver1("data/no_analysis.json");
@@ -61,13 +55,9 @@ int main(int argc, char **argv)
     solver3.computeOrder();
     solver3.getResult();
 
-    */
-
     /***************/
     /* Test: Norms */
     /***************/
-
-    /*
 
     std::cout << std::endl;
     // std::vector<double> v{0, -0.2, -0.3, -0.4};
@@ -79,8 +69,7 @@ int main(int argc, char **argv)
     std::cout << "- ||v||Linf = " << norm_Linf(v) << std::endl;
     std::cout << "- ||v||L1 = " << norm_L1(v) << std::endl;
     std::cout << "- ||v||L2 = " << norm_L2(v) << std::endl;
-
-    */
+    std::cout << std::endl;
 
     return 0;
 }

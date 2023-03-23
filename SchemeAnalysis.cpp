@@ -41,15 +41,6 @@ double SchemeAnalysis::computeError() const
         errors.push_back(uex_(gett()[i]) - getu()[i]);
     }
 
-    /*
-    std::cout << std::endl;
-    std::cout << "errors = { ";
-    for (auto vi : errors)
-        std::cout << vi << ", ";
-    std::cout << "}" << std::endl;
-    std::cout << std::endl;
-    */
-
     return norm(errors);
 }
 

@@ -25,7 +25,10 @@ void ThetaMethod::init()
     std::cout << std::endl;
 
     if (!params_.sanityCheck())
+    {
+        analysis_ = false;
         return;
+    }
 
     // Domain
     T_ = params_.domain.T;
