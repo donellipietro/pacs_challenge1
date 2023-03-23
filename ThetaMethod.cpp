@@ -83,7 +83,8 @@ bool ThetaMethod::solve()
     }
 
     // Initilaization
-    double un = y0_;
+    uh_.push_back(y0_);
+    double un = uh_.front();
     double tn = t_.front();
     function1 F([this, &tn, &un](double x)
                 { return x - theta_ * h_ * f_(tn + h_, x) - (1 - theta_) * h_ * f_(tn, un) - un; });
@@ -92,12 +93,12 @@ bool ThetaMethod::solve()
     bool status_newton = true;
 
     // Iterative algorithm
-    for (std::size_t i = 0; i <= N_; ++i)
+    for (std::size_t i = 1; i <= N_; ++i)
     {
         std::tie(un, status_newton) = apsc::Newton(F, dF, un);
         if (!status_newton)
         {
-            std::cerr << "Cannot find the solution" << std::endl;
+            std::cerr << "Newton algorithm cannot find the solution" << std::endl;
             return false;
         }
         else
