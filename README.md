@@ -1,5 +1,3 @@
-![GitHub repository](https://github.com/donellipietro/pacs_challenge1)
-
 # Challenge 1 - Build a simple solver for a Cauchy problem
 
 This code was developed for the course of **Advanced Programming for Scientific Computing** for the MSc. in Mathematical Engineering at Politecnico di Milano, A.Y. 2022/2023.
@@ -39,10 +37,10 @@ It is of interest to implement a program that numerically solves a cauchy proble
 
 - [`SchemeAnalysis.hpp`](SchemeAnalysis.hpp) This is an interface that allows the computation of the order of convergence of a numerical method. The choice of the norm used to compute the errors is made through the parameters of the model to which it is applied; the norms implemented are: norm Linf, L1, L2.
 In order to use this class, a numeric method must expose the following methods: 
- -- `virtual void setN(const unsigned int N) = 0;`
- -- `virtual void restoreN() = 0;`
- -- `virtual const std::vector<double> &gett() const = 0;`
- -- `virtual const std::vector<double> &getu() const = 0;`
+  - `virtual void setN(const unsigned int N) = 0;`
+  - `virtual void restoreN() = 0;`
+  - `virtual const std::vector<double> &gett() const = 0;`
+  - `virtual const std::vector<double> &getu() const = 0;`
 Methods are implemented in [`SchemeAnalysis.cpp`](SchemeAnalysis.cpp).
 
 - [`ThetaMethod.hpp`](ThetaMethod.hpp) This class implements the initialization of the numerical scheme based on the chosen parameters and the problem solver using theta-method, where theta is a parameter itself. As a default, the class is initialized with parameters related to the challenge. However, a constructor is also defined fot the initialization of the model using parameters contained within a `.json` file located in the `data` directory. In this case the file name must be specified as a constructor parameter. Utilities for exporting and displaying the results are also implemented along with the methods needed to use the numerical scheme analysis interface. The implementation of the methods is contained in [`ThetaMethod.cpp`](ThetaMethod.cpp).
