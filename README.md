@@ -42,7 +42,7 @@ In order to use this class, a numeric method must expose the following methods:
   - `virtual const std::vector<double> &gett() const = 0;`
   - `virtual const std::vector<double> &getu() const = 0;`
 
-Methods are implemented in [`SchemeAnalysis.cpp`](SchemeAnalysis.cpp).
+  Methods are implemented in [`SchemeAnalysis.cpp`](SchemeAnalysis.cpp).
 
 - [`ThetaMethod.hpp`](ThetaMethod.hpp) This class implements the initialization of the numerical scheme based on the chosen parameters and the problem solver using theta-method, where theta is a parameter itself. As a default, the class is initialized with parameters related to the challenge. However, a constructor is also defined fot the initialization of the model using parameters contained within a `.json` file located in the `data` directory. In this case the file name must be specified as a constructor parameter. Utilities for exporting and displaying the results are also implemented along with the methods needed to use the numerical scheme analysis interface. The implementation of the methods is contained in [`ThetaMethod.cpp`](ThetaMethod.cpp).
 
